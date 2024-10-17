@@ -10,5 +10,5 @@ nlp = load("de_core_news_sm", disable=["parser", "attribute_ruler", "lemmatizer"
 def read_root(s: Union[str, None] = None):
   if s is not None:
     return nlp(unquote(s)).to_json()
-  else:
-    return None
+  
+  return "use s query parameter to analyze a text"
