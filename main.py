@@ -1,14 +1,21 @@
-from typing import Union
 from fastapi import FastAPI
 from spacy import load
 from urllib.parse import unquote
+from pydantic import BaseModel
+class Item(BaseModel):
+    s: str
 
 app = FastAPI()
 nlp = load("de_core_news_sm", disable=["parser", "attribute_ruler", "lemmatizer", "ner"])
 
 @app.get("/")
-def read_root(s: Union[str, None] = None):
+def read_root(s: str = None):
   if s is not None:
     return nlp(unquote(s)).to_json()
+
+@app.post("/")
+def read_root_post(item: Item = None):
+  if item is not None and item.s is not None:
+    return nlp(unquote(item.s)).to_json()
   
-  return "use s query parameter to analyze a text"
+  return "use s key to analyze a text"
