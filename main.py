@@ -16,6 +16,6 @@ def read_root(s: str = None):
 @app.post("/")
 def read_root_post(item: Item = None):
   if item is not None and item.s is not None:
-    return nlp(unquote(item.s)).to_json()
+    return nlp(item.s).to_json()
   
   return "use s key to analyze a text"
