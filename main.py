@@ -6,7 +6,7 @@ class Item(BaseModel):
     s: str
 
 app = FastAPI()
-nlp = load("de_core_news_sm", disable=["parser", "attribute_ruler", "lemmatizer", "ner"])
+nlp = load("de_core_news_sm", disable=["parser", "morphologizer", "lemmatizer", "attribute_ruler", "ner"])
 
 @app.get("/")
 def read_root(s: str = None):
