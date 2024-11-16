@@ -1,0 +1,3 @@
+[submodule "German-Words"]
+	path = German-Words
+	url = https://github.com/Nordsword3m/German-Words.git

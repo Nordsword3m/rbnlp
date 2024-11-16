@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from spacy import load
 from urllib.parse import unquote
 from pydantic import BaseModel
-from json import dumps
 from re import sub
+import json
 class Item(BaseModel):
   s: List[str]
 
@@ -37,3 +37,11 @@ def read_root_post(item: Item = None):
     return [get_tokens(d) for d in nlp.pipe([unquote(x) for x in item.s])]
   
   return "use s key to analyze a text"
+
+with open("German-Words/parsedWords.min.json", encoding="utf8") as f:
+  data = json.load(f)
+
+@app.get("/data")
+def get_data():
+  
+  return data
