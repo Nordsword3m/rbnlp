@@ -1,5 +1,6 @@
+import os
 from typing import List
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from spacy import load
 from urllib.parse import unquote
 from pydantic import BaseModel
@@ -38,10 +39,22 @@ def read_root_post(item: Item = None):
   
   return "use s key to analyze a text"
 
-with open("German-Words/parsedWords.min.json", encoding="utf8") as f:
+with open("German-Words/parsedWords.json", encoding="utf8") as f:
   data = json.load(f)
 
+# Load sections from each file in German-Words/parsedSections into array
+sections = []
+for root, dirs, files in os.walk("German-Words/parsedSections"):
+  for file in files:
+    with open(os.path.join(root, file), encoding="utf8") as f:
+      sections.append(json.load(f))
+
 @app.get("/data")
-def get_data():
-  
+def get_data(sect: int = None):
+  if sect is not None:
+    if sect < len(sections):
+      return sections[sect]
+    else:
+      raise HTTPException(status_code=404, detail="Section not found")  
+    
   return data
