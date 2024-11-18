@@ -10,7 +10,7 @@ class Item(BaseModel):
   s: List[str]
 
 app = FastAPI()
-nlp = load("de_core_news_lg", disable=["parser", "lemmatizer", "attribute_ruler", "ner"])
+nlp = load("de_core_news_md", disable=["parser", "lemmatizer", "attribute_ruler", "ner"])
 
 def firstElem(arr):
   if len(arr) == 0:
