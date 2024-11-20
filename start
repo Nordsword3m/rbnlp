@@ -1,4 +1,0 @@
-#!/bin/bash
-echo "Starting server"
-sudo source .venv/bin/activate
-sudo python3 -m fastapi run

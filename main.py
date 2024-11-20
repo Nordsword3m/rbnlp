@@ -4,7 +4,6 @@ from fastapi import FastAPI, HTTPException
 from spacy import load
 from urllib.parse import unquote
 from pydantic import BaseModel
-from re import sub
 import json
 class Item(BaseModel):
   s: List[str]
@@ -19,7 +18,7 @@ def firstElem(arr):
 
 def token2obj(tok):
   return {
-    "text": sub(r"[.,/#!?$%^&*;:{}=\-_`~()]", '', tok.text).strip(),
+    "text": tok.text.strip(),
     "tag": tok.tag_,
     "case": firstElem(tok.morph.get("Case")),
   }
@@ -31,13 +30,15 @@ def get_tokens(doc):
 def read_root(s: str = None):
   if s is not None:
     return get_tokens(nlp(unquote(s)))
+  
+  raise HTTPException(status_code=400, detail="use s key to analyze a text")  
 
 @app.post("/")
 def read_root_post(item: Item = None):
   if item is not None and item.s is not None:
     return [get_tokens(d) for d in nlp.pipe([unquote(x) for x in item.s])]
   
-  return "use s key to analyze a text"
+  raise HTTPException(status_code=400, detail="use s key to analyze a list of texts")  
 
 with open("German-Words/parsedWords.json", encoding="utf8") as f:
   data = json.load(f)
@@ -52,7 +53,7 @@ for root, dirs, files in os.walk("German-Words/parsedSections"):
 @app.get("/data")
 def get_data(sect: int = None):
   if sect is not None:
-    if sect < len(sections):
+    if sect >= 0 and sect < len(sections):
       return sections[sect]
     else:
       raise HTTPException(status_code=404, detail="Section not found")  
