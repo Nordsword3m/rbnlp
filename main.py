@@ -1,6 +1,7 @@
 import os
 from typing import List
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from spacy import load
 from urllib.parse import unquote
 from pydantic import BaseModel
@@ -9,7 +10,7 @@ class Item(BaseModel):
   s: List[str]
 
 app = FastAPI()
-nlp = load("de_core_news_md", disable=["parser", "lemmatizer", "attribute_ruler", "ner"])
+nlp = load("de_core_news_sm", disable=["parser", "lemmatizer", "attribute_ruler", "ner"])
 
 def firstElem(arr):
   if len(arr) == 0:
@@ -40,22 +41,4 @@ def read_root_post(item: Item = None):
   
   raise HTTPException(status_code=400, detail="use s key to analyze a list of texts")  
 
-with open("German-Words/parsedWords.json", encoding="utf8") as f:
-  data = json.load(f)
-
-# Load sections from each file in German-Words/parsedSections into array
-sections = []
-for root, dirs, files in os.walk("German-Words/parsedSections"):
-  for file in files:
-    with open(os.path.join(root, file), encoding="utf8") as f:
-      sections.append(json.load(f))
-
-@app.get("/data")
-def get_data(sect: int = None):
-  if sect is not None:
-    if sect >= 0 and sect < len(sections):
-      return sections[sect]
-    else:
-      raise HTTPException(status_code=404, detail="Section not found")  
-    
-  return data
+app.mount("/data", StaticFiles(directory="./German-Words/data"), name="data")
