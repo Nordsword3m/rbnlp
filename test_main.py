@@ -67,17 +67,17 @@ def test_read_root_post():
     ]
   ]
 
-def test_get_data_no_sect():
-  response = client.get("/data")
+def test_get_data_all():
+  response = client.get("/data/all.json")
   assert response.status_code == 200
   assert len(response.json()) == 24119
 
-def test_get_data_sect_out_of_range():
-  response = client.get("/data?sect=25")
+def test_get_data_sect_not_found():
+  response = client.get("/data/1000.json")
   assert response.status_code == 404
-  assert response.json() == {"detail": "Section not found"}
+  assert response.json() == {"detail": "Not Found"}
 
 def test_get_data_sect():
-  response = client.get("/data?sect=10")
+  response = client.get("/data/10.json")
   assert response.status_code == 200
   assert len(response.json()) == 1000
