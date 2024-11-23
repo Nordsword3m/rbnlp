@@ -10,7 +10,7 @@ class Item(BaseModel):
   s: List[str]
 
 app = FastAPI()
-nlp = load("de_core_news_lg", disable=["parser", "lemmatizer", "attribute_ruler", "ner"])
+nlp = load("de_core_news_md", disable=["parser", "lemmatizer", "attribute_ruler", "ner"])
 
 def firstElem(arr):
   if len(arr) == 0:
@@ -42,3 +42,7 @@ def read_root_post(item: Item = None):
   raise HTTPException(status_code=400, detail="use s key to analyze a list of texts")  
 
 app.mount("/data", StaticFiles(directory="./German-Words/data"), name="data")
+
+@app.get("/health")
+def health():
+  return {"status": "ok"}
