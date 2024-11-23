@@ -8,6 +8,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,3 +39,14 @@ jobs:
       - name: Clean up SSH key
         if: always()
         run: rm -f ~/.ssh/id_rsa
+
+  test-deployment:
+    needs: deploy
+    name: Test deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run test script
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: node test_deployment.js http://$EC2_HOST
