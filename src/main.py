@@ -1,11 +1,9 @@
-import os
 from typing import List
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from spacy import load
 from urllib.parse import unquote
 from pydantic import BaseModel
-import json
 class Item(BaseModel):
   s: List[str]
 
