@@ -6,7 +6,7 @@ client = TestClient(app)
 def test_read_root_no_text():
   response = client.get("/")
   assert response.status_code == 400
-  assert response.json() == {"detail": "use s key to analyze a text"}
+  assert response.json() == {"detail": "use s param to analyze a text"}
 
 def test_read_root():
   response = client.get("/?s=Das%20ist%20ein%20Test%2Cder%20funktioniert.")
@@ -25,7 +25,7 @@ def test_read_root():
 def test_read_root_post_no_item():
   response = client.post("/")
   assert response.status_code == 400
-  assert response.json() == {"detail": "use s key to analyze a list of texts"}
+  assert response.json() == {"detail": "use s body data key to analyze a list of texts"}
 
 def test_read_root_post_no_s():
   response = client.post("/", json={"d": ["Das ist ein Test,der funktioniert."]})
