@@ -3,7 +3,7 @@ name: Build and deploy to ECS
 on:
   push:
     branches:
-      - deploy
+      - main
   workflow_dispatch:
 
 env:
