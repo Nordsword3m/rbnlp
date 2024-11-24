@@ -30,14 +30,14 @@ def read_root(s: str = None):
   if s is not None:
     return get_tokens(nlp(unquote(s)))
   
-  raise HTTPException(status_code=400, detail="use s key to analyze a text")  
+  raise HTTPException(status_code=400, detail="use s param to analyze a text")  
 
 @app.post("/")
 def read_root_post(item: Item = None):
   if item is not None and item.s is not None:
     return [get_tokens(d) for d in nlp.pipe([unquote(x) for x in item.s])]
   
-  raise HTTPException(status_code=400, detail="use s key to analyze a list of texts")  
+  raise HTTPException(status_code=400, detail="use s body data key to analyze a list of texts")  
 
 app.mount("/data", StaticFiles(directory="./German-Words/data"), name="data")
 
