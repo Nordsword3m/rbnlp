@@ -90,4 +90,4 @@ def test_health():
 def test_version():
   response = client.get("/data/version.json")
   assert response.status_code == 200
-  assert response.json() == {"version": 0}
+  assert response.json() == {"version": 1}
