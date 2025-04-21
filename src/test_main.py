@@ -68,17 +68,17 @@ def test_read_root_post():
   ]
 
 def test_get_data_all():
-  response = client.get("/data/all.json")
+  response = client.get("/data/v1.0.0/all.json")
   assert response.status_code == 200
   assert len(response.json()) == 24119
 
 def test_get_data_sect_not_found():
-  response = client.get("/data/1000.json")
+  response = client.get("/data/v1.0.0/1000.json")
   assert response.status_code == 404
   assert response.json() == {"detail": "Not Found"}
 
 def test_get_data_sect():
-  response = client.get("/data/10.json")
+  response = client.get("/data/v1.0.0/10.json")
   assert response.status_code == 200
   assert len(response.json()) == 1000
 
@@ -88,6 +88,6 @@ def test_health():
   assert response.json() == {"status": "ok"}
 
 def test_version():
-  response = client.get("/data/version.json")
+  response = client.get("/data/v1.0.0/version.json")
   assert response.status_code == 200
-  assert response.json() == {"version": 2}
+  assert response.json() == {"version": "v1.0.0"}
