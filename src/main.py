@@ -39,7 +39,7 @@ def read_root_post(item: Item = None):
   
   raise HTTPException(status_code=400, detail="use s body data key to analyze a list of texts")  
 
-app.mount("/data", StaticFiles(directory="./German-Words/data"), name="data")
+app.mount("/data", StaticFiles(directory="./data"), name="data")
 
 @app.get("/health")
 def health():
