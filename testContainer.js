@@ -109,7 +109,7 @@ const testDeployment = async (address) => {
     throw `Post sentences failed: ${error}`;
   });
 
-  await fetch(`${address}/data/all.json`).then(async (response) => {
+  await fetch(`${address}/data/v1.0.0/all.json`).then(async (response) => {
     if (response.status === 200) {
       await response.json().then((data) => {
         if (data.length === 24119) {
@@ -127,7 +127,7 @@ const testDeployment = async (address) => {
   });
 
   for (let i = 0; i < 25; i++) {
-    await fetch(`${address}/data/${i}.json`).then(async (response) => {
+    await fetch(`${address}/data/v1.0.0/${i}.json`).then(async (response) => {
       if (response.status === 200) {
         await response.json().then((data) => {
           if (data.length === (i === 24 ? 119 : 1000)) {
