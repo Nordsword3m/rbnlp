@@ -21,9 +21,9 @@
 │   ├── main.py                    # FastAPI application (46 lines)
 │   ├── test_main.py               # Pytest test suite (93 lines, 10 tests)
 │   └── data/
-│       └── v1.0.0/                # Static JSON data files (24,119 German words)
-│           ├── all.json           # Full dataset (1.5M lines)
-│           ├── 0.json through 24.json  # Paginated data (1000 entries each, except 24.json has 119)
+│       └── v1.0.0/                # Static JSON data files (24,119 German word entries)
+│           ├── all.json           # Full dataset (24,119 entries, ~1.54M lines, 32MB)
+│           ├── 0.json through 24.json  # Paginated data (1000 entries each, except 24.json has 119 entries)
 │           └── version.json       # Version metadata
 ├── German-Words/                  # Git submodule (currently empty in working directory)
 ├── Dockerfile                     # Container definition
@@ -51,6 +51,8 @@ pip install -r requirements.txt
 
 **Installation time**: ~2 minutes (downloads ~420MB including PyTorch 2.5.1, spaCy models, and CUDA libraries)
 **Critical dependencies**: spaCy, FastAPI, PyTorch, de_core_news_md (German language model)
+
+**Note**: requirements.txt is UTF-16 encoded, but pip handles this correctly. If you encounter encoding issues, convert to UTF-8: `iconv -f UTF-16 -t UTF-8 requirements.txt > requirements_utf8.txt`
 
 ### Running Tests
 
@@ -124,10 +126,12 @@ Modify Dockerfile line 8 to: `CMD ["fastapi", "run", "main.py", "--port", "5000"
 2. **POST /** with `{"s": ["text1", "text2", ...]}` - Batch process multiple sentences
 3. **GET /health** - Health check endpoint (returns `{"status": "ok"}`)
 4. **GET /data/v1.0.0/{file}.json** - Serve static German word data files
-   - `all.json`: Complete dataset (24,119 entries)
-   - `0.json` through `23.json`: 1000 entries each
-   - `24.json`: 119 entries
+   - `all.json`: Complete dataset (24,119 word entries)
+   - `0.json` through `23.json`: 1000 word entries each
+   - `24.json`: 119 word entries (remaining from 24,000 / 1000 pagination)
    - `version.json`: Version metadata
+
+**Note**: JSON files are formatted with pretty-printing, so line counts are much higher than entry counts (e.g., 24.json has 119 entries but ~8,700 lines).
 
 ## GitHub Workflows
 
