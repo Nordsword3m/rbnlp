@@ -109,13 +109,13 @@ const testDeployment = async (address) => {
     throw `Post sentences failed: ${error}`;
   });
 
-  await fetch(`${address}/data/v1.0.0/all.json`).then(async (response) => {
+  await fetch(`${address}/data/v1.2.0/all.json`).then(async (response) => {
     if (response.status === 200) {
       await response.json().then((data) => {
-        if (data.length === 24119) {
+        if (data.length === 70926) {
           console.log('Get all data successful');
         } else {
-          throw `Expected: 24119, got: ${data.length}`;
+          throw `Expected: 70926, got: ${data.length}`;
         }
       });
     } else {
@@ -126,14 +126,14 @@ const testDeployment = async (address) => {
     throw `Get all data failed: ${error}`;
   });
 
-  for (let i = 0; i < 25; i++) {
-    await fetch(`${address}/data/v1.0.0/${i}.json`).then(async (response) => {
+  for (let i = 0; i < 71; i++) {
+    await fetch(`${address}/data/v1.2.0/${i}.json`).then(async (response) => {
       if (response.status === 200) {
         await response.json().then((data) => {
-          if (data.length === (i === 24 ? 119 : 1000)) {
+          if (data.length === (i === 70 ? 926 : 1000)) {
             console.log(`Get data ${i} successful`);
           } else {
-            throw `Expected: 1000, got: ${data.length}`;
+            throw `Expected: ${i === 70 ? 926 : 1000}, got: ${data.length}`;
           }
         });
       } else {
