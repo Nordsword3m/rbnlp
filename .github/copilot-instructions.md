@@ -4,7 +4,7 @@
 
 **rbnlp** is a German Natural Language Processing (NLP) API service built with FastAPI and spaCy. It provides tokenization and part-of-speech tagging for German text using the `de_core_news_md` spaCy model. The service is containerized with Docker and deployed to AWS ECS.
 
-**Repository Size**: ~67MB (includes 60MB+ of static JSON data files)
+**Repository Size**: ~250MB (includes 180MB+ of static JSON data files)
 **Primary Language**: Python 3.12
 **Framework**: FastAPI 0.115.2
 **NLP Library**: spaCy 3.8.2 with de_core_news_md model
@@ -19,12 +19,11 @@
 │       └── test-api.yml           # Test workflow (runs on all branches)
 ├── src/
 │   ├── main.py                    # FastAPI application (46 lines)
-│   ├── test_main.py               # Pytest test suite (93 lines, 10 tests)
+│   ├── test_main.py               # Pytest test suite (88 lines, 9 tests)
 │   └── data/
-│       └── v1.0.0/                # Static JSON data files (24,119 German word entries)
-│           ├── all.json           # Full dataset (24,119 entries, ~1.54M lines, 32MB)
-│           ├── 0.json through 24.json  # Paginated data (1000 entries each, except 24.json has 119 entries)
-│           └── version.json       # Version metadata
+│       └── v1.2.0/                # Static JSON data files (70,926 German word entries)
+│           ├── all.json           # Full dataset (70,926 entries, ~2.99M lines, 62MB)
+│           └── 0.json through 70.json  # Paginated data (1000 entries each, except 70.json has 926 entries)
 ├── German-Words/                  # Git submodule (currently empty in working directory)
 ├── Dockerfile                     # Container definition
 ├── requirements.txt               # Python dependencies (75 packages)
@@ -62,7 +61,7 @@ cd src && python -m pytest -vv
 ```
 
 **Test execution time**: ~5 seconds
-**Expected result**: 10 tests pass
+**Expected result**: 9 tests pass
 **Test coverage**:
 - GET endpoint with/without query parameter
 - POST endpoint with/without body data
@@ -125,13 +124,12 @@ Modify Dockerfile line 8 to: `CMD ["fastapi", "run", "main.py", "--port", "5000"
 1. **GET /?s={text}** - Tokenize and tag a single German sentence
 2. **POST /** with `{"s": ["text1", "text2", ...]}` - Batch process multiple sentences
 3. **GET /health** - Health check endpoint (returns `{"status": "ok"}`)
-4. **GET /data/v1.0.0/{file}.json** - Serve static German word data files
-   - `all.json`: Complete dataset (24,119 word entries)
-   - `0.json` through `23.json`: 1000 word entries each
-   - `24.json`: 119 word entries (remaining from 24,000 / 1000 pagination)
-   - `version.json`: Version metadata
+4. **GET /data/v1.2.0/{file}.json** - Serve static German word data files
+   - `all.json`: Complete dataset (70,926 word entries)
+   - `0.json` through `69.json`: 1000 word entries each
+   - `70.json`: 926 word entries (remaining from 70,926 / 1000 pagination)
 
-**Note**: JSON files are formatted with pretty-printing, so line counts are much higher than entry counts (e.g., 24.json has 119 entries but ~8,700 lines).
+**Note**: JSON files are formatted with pretty-printing, so line counts are much higher than entry counts (e.g., 70.json has 926 entries but ~37,000 lines).
 
 ## GitHub Workflows
 
@@ -234,7 +232,7 @@ From requirements.txt (75 packages total):
 
 ### Validating Changes Before PR
 
-1. Run the test suite: `cd src && python -m pytest -vv` (must pass all 10 tests)
+1. Run the test suite: `cd src && python -m pytest -vv` (must pass all 9 tests)
 2. Build Docker image: `docker build -t rbnlp .`
 3. Test containerized app: `docker run -d -p 5000:80 rbnlp && node testContainer.js http://localhost:5000`
 
@@ -250,7 +248,7 @@ Update `src/test_main.py` if you:
 
 - **No linting configured**: Repository has no pylint, flake8, black, or other linting tools
 - **No type checking**: No mypy or similar type checkers configured
-- **Data files are committed**: The src/data/ directory contains 60MB+ of static JSON (version-controlled)
+- **Data files are committed**: The src/data/ directory contains 180MB+ of static JSON (version-controlled)
 - **Submodule dependency**: German-Words submodule must be initialized for production deployment
 - **Python version locked**: Dockerfile and workflow explicitly use Python 3.12
 
