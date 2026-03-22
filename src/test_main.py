@@ -82,6 +82,16 @@ def test_get_data_sect():
   assert response.status_code == 200
   assert len(response.json()) == 1000
 
+def test_get_data_sect_first():
+  response = client.get("/data/v1.2.0/0.json")
+  assert response.status_code == 200
+  assert len(response.json()) == 1000
+
+def test_get_data_sect_last():
+  response = client.get("/data/v1.2.0/70.json")
+  assert response.status_code == 200
+  assert len(response.json()) == 926
+
 def test_health():
   response = client.get("/health")
   assert response.status_code == 200
