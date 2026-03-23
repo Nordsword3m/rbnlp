@@ -12,20 +12,21 @@
 ## Project Structure
 
 ```
-/home/runner/work/rbnlp/rbnlp/
+rbnlp/
 ├── .github/
+│   ├── copilot-instructions.md    # This file
 │   └── workflows/
 │       ├── test-and-deploy.yml    # Main CI/CD pipeline (runs on main branch)
 │       └── test-api.yml           # Test workflow (runs on all branches)
 ├── src/
 │   ├── main.py                    # FastAPI application (46 lines)
-│   ├── test_main.py               # Pytest test suite (88 lines, 9 tests)
+│   ├── test_main.py               # Pytest test suite (11 tests)
 │   └── data/
 │       └── v1.2.0/                # Static JSON data files (70,926 German word entries)
 │           ├── all.json           # Full dataset (70,926 entries, ~2.99M lines, 62MB)
 │           └── 0.json through 70.json  # Paginated data (1000 entries each, except 70.json has 926 entries)
 ├── German-Words/                  # Git submodule (currently empty in working directory)
-├── Dockerfile                     # Container definition
+├── Dockerfile                     # Container definition (runs on port 5000)
 ├── requirements.txt               # Python dependencies (75 packages)
 ├── testContainer.js               # Node.js integration tests for deployed container
 └── .gitignore                     # Excludes env/, __pycache__/
@@ -61,11 +62,11 @@ cd src && python -m pytest -vv
 ```
 
 **Test execution time**: ~5 seconds
-**Expected result**: 9 tests pass
+**Expected result**: 11 tests pass
 **Test coverage**:
 - GET endpoint with/without query parameter
 - POST endpoint with/without body data
-- Static file serving for data endpoints
+- Static file serving for data endpoints (first, middle, and last sections; full dataset; not-found)
 - Health check endpoint
 - Error handling (400, 404, 422 status codes)
 
@@ -102,22 +103,13 @@ docker build -t rbnlp .
 
 ### Testing the Docker Container
 
-**⚠️ CRITICAL PORT MISMATCH ISSUE**: The Dockerfile configures the app to run on port 80, but the GitHub workflow `test-and-deploy.yml` expects port 5000. This causes the health check to fail.
-
-**Current workflow command (FAILS)**:
+**Command**:
 ```bash
 docker run -d -p 5000:5000 rbnlp
 node testContainer.js http://localhost:5000
 ```
 
-**Workaround - Use port 80**:
-```bash
-docker run -d -p 5000:80 rbnlp
-node testContainer.js http://localhost:5000
-```
-
-**Alternative - Rebuild with correct port**:
-Modify Dockerfile line 8 to: `CMD ["fastapi", "run", "main.py", "--port", "5000"]`
+The container runs on port 5000 (matching the workflow and Node.js integration tests).
 
 ## API Endpoints
 
@@ -153,7 +145,7 @@ Modify Dockerfile line 8 to: `CMD ["fastapi", "run", "main.py", "--port", "5000"
 1. Checkout with submodules
 2. Set up Docker buildx
 3. Build Docker image
-4. Run container on port 5000:5000 ⚠️ (PORT MISMATCH - see above)
+4. Run container on port 5000:5000
 5. Run Node.js integration tests
 
 **Job 2: build-and-deploy** (requires test-container success)
@@ -204,20 +196,16 @@ From requirements.txt (75 packages total):
 
 ## Common Issues and Workarounds
 
-### 1. Port Mismatch in Docker Testing
-**Issue**: Dockerfile uses port 80, workflow expects port 5000
-**Workaround**: Map host port 5000 to container port 80: `docker run -d -p 5000:80 rbnlp`
-
-### 2. Git Submodule Not Initialized
+### 1. Git Submodule Not Initialized
 **Issue**: German-Words submodule directory is empty
 **Workaround**: Workflows use `actions/checkout@v4` with `submodules: recursive`
 **Manual fix**: `git submodule update --init --recursive`
 
-### 3. Permission Denied on Port 80
+### 2. Permission Denied on Port 80
 **Issue**: FastAPI cannot bind to port 80 without root
-**Workaround**: Use port 8080 or higher for local testing
+**Note**: The Dockerfile and workflow use port 5000, so this only applies if you change the port manually
 
-### 4. Tests Must Run from src/ Directory
+### 3. Tests Must Run from src/ Directory
 **Issue**: Relative imports and file paths in test_main.py assume working directory is src/
 **Solution**: Always `cd src` before running pytest
 
@@ -232,9 +220,9 @@ From requirements.txt (75 packages total):
 
 ### Validating Changes Before PR
 
-1. Run the test suite: `cd src && python -m pytest -vv` (must pass all 9 tests)
+1. Run the test suite: `cd src && python -m pytest -vv` (must pass all 11 tests)
 2. Build Docker image: `docker build -t rbnlp .`
-3. Test containerized app: `docker run -d -p 5000:80 rbnlp && node testContainer.js http://localhost:5000`
+3. Test containerized app: `docker run -d -p 5000:5000 rbnlp && node testContainer.js http://localhost:5000`
 
 ### When to Update Tests
 
