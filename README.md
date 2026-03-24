@@ -31,7 +31,7 @@ All 17 tests should pass in ~5 seconds.
 
 ```
 cd src
-fastapi dev main.py --port 8000
+python -m fastapi dev main.py --port 8000
 ```
 
 The API will be available at <http://127.0.0.1:8000>.  
@@ -41,7 +41,7 @@ Interactive API docs (Swagger UI) are at <http://127.0.0.1:8000/docs>.
 
 ```
 cd src
-fastapi run main.py --port 8080
+python -m fastapi run main.py --port 8080
 ```
 
 ## Docker
