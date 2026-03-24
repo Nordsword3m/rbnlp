@@ -20,16 +20,18 @@ pip install -r requirements.txt
 
 ## Running Tests
 
-```bash
-cd src && python -m pytest -vv
+```
+cd src
+python -m pytest -vv
 ```
 
 All 17 tests should pass in ~5 seconds.
 
 ## Running the Development Server
 
-```bash
-cd src && fastapi dev main.py --port 8000
+```
+cd src
+fastapi dev main.py --port 8000
 ```
 
 The API will be available at <http://127.0.0.1:8000>.  
@@ -37,8 +39,9 @@ Interactive API docs (Swagger UI) are at <http://127.0.0.1:8000/docs>.
 
 ## Running the Production Server
 
-```bash
-cd src && fastapi run main.py --port 8080
+```
+cd src
+fastapi run main.py --port 8080
 ```
 
 ## Docker
