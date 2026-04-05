@@ -26,7 +26,7 @@ rbnlp/
 │           ├── all.json           # Full dataset (70,926 entries, ~2.99M lines, 62MB)
 │           └── 0.json through 70.json  # Paginated data (1000 entries each, except 70.json has 926 entries)
 ├── German-Words/                  # Git submodule (currently empty in working directory)
-├── Dockerfile                     # Container definition (runs on port 5000)
+├── Dockerfile                     # Container definition (runs on port 80)
 ├── requirements.txt               # Python dependencies (75 packages)
 ├── testContainer.js               # Node.js integration tests for deployed container
 └── .gitignore                     # Excludes env/, __pycache__/
@@ -105,11 +105,11 @@ docker build -t rbnlp .
 
 **Command**:
 ```bash
-docker run -d -p 5000:5000 rbnlp
+docker run -d -p 5000:80 rbnlp
 node testContainer.js http://localhost:5000
 ```
 
-The container runs on port 5000 (matching the workflow and Node.js integration tests).
+The container listens internally on **port 80** (required for AWS ECS). The `-p 5000:80` flag maps host port 5000 to the container's port 80 for local testing convenience.
 
 ## API Endpoints
 
@@ -145,7 +145,7 @@ The container runs on port 5000 (matching the workflow and Node.js integration t
 1. Checkout with submodules
 2. Set up Docker buildx
 3. Build Docker image
-4. Run container on port 5000:5000
+4. Run container with `-p 5000:80` (host port 5000 → container port 80)
 5. Run Node.js integration tests
 
 **Job 2: build-and-deploy** (requires test-container success)
@@ -202,8 +202,15 @@ From requirements.txt (75 packages total):
 **Manual fix**: `git submodule update --init --recursive`
 
 ### 2. Permission Denied on Port 80
-**Issue**: FastAPI cannot bind to port 80 without root
-**Note**: The Dockerfile and workflow use port 5000, so this only applies if you change the port manually
+**Issue**: FastAPI cannot bind to port 80 without root privileges
+**Note**: This only applies when running FastAPI **directly** (outside Docker). Inside Docker the process runs as root, so port 80 works fine. For local development outside Docker, use `--port 8000` or `--port 8080`.
+
+### ⚠️ CRITICAL: Do NOT Change the Container Port
+**The Dockerfile MUST expose port 80.** AWS ECS task definitions and load-balancer health checks are hard-coded to target port 80. Changing this port will immediately break the production service.
+- ✅ Correct: `CMD ["fastapi", "run", "main.py", "--port", "80"]`
+- ❌ Wrong:   `CMD ["fastapi", "run", "main.py", "--port", "5000"]` (or any other port)
+
+If you need to run the container locally on a different host port, use `-p <host_port>:80` — never change the **container** port.
 
 ### 3. Tests Must Run from src/ Directory
 **Issue**: Relative imports and file paths in test_main.py assume working directory is src/
@@ -222,7 +229,7 @@ From requirements.txt (75 packages total):
 
 1. Run the test suite: `cd src && python -m pytest -vv` (must pass all 11 tests)
 2. Build Docker image: `docker build -t rbnlp .`
-3. Test containerized app: `docker run -d -p 5000:5000 rbnlp && node testContainer.js http://localhost:5000`
+3. Test containerized app: `docker run -d -p 5000:80 rbnlp && node testContainer.js http://localhost:5000`
 
 ### When to Update Tests
 
