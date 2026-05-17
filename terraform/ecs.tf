@@ -2,10 +2,14 @@ data "aws_ecs_cluster" "main" {
   cluster_name = var.ecs_cluster_name
 }
 
+data "aws_ecs_task_definition" "main" {
+  task_definition = var.task_definition_family
+}
+
 resource "aws_ecs_service" "main" {
   name                    = var.ecs_service_name
   cluster                 = data.aws_ecs_cluster.main.arn
-  task_definition         = var.task_definition_arn
+  task_definition         = data.aws_ecs_task_definition.main.arn
   scheduling_strategy     = "REPLICA"
   desired_count           = 1
   platform_version        = "LATEST"

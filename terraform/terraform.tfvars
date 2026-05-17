@@ -11,4 +11,4 @@ subnet_ids = [
 
 vpc_id = "vpc-01304652baeb25843"
 
-task_definition_arn = "arn:aws:ecs:eu-west-2:423623828513:task-definition/rbnlp:5"
+task_definition_family = "rbnlp"

@@ -28,8 +28,8 @@ variable "vpc_id" {
   default     = "vpc-01304652baeb25843"
 }
 
-variable "task_definition_arn" {
-  description = "ARN of the ECS task definition to run"
+variable "task_definition_family" {
+  description = "ECS task definition family name (latest active revision is used automatically)"
   type        = string
-  default     = "arn:aws:ecs:eu-west-2:423623828513:task-definition/rbnlp:5"
+  default     = "rbnlp"
 }
