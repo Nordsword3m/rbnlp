@@ -17,7 +17,8 @@ rbnlp/
 │   ├── copilot-instructions.md    # This file
 │   └── workflows/
 │       ├── test-and-deploy.yml    # Main CI/CD pipeline (runs on main branch)
-│       └── test-api.yml           # Test workflow (runs on all branches)
+│       ├── test-api.yml           # Test workflow (runs on all branches)
+│       └── terraform-validate.yml # Terraform fmt/init/validate checks (runs on terraform changes)
 ├── src/
 │   ├── main.py                    # FastAPI application (46 lines)
 │   ├── test_main.py               # Pytest test suite (11 tests)
@@ -27,6 +28,7 @@ rbnlp/
 │           └── 0.json through 70.json  # Paginated data (1000 entries each, except 70.json has 926 entries)
 ├── German-Words/                  # Git submodule (currently empty in working directory)
 ├── Dockerfile                     # Container definition (runs on port 80)
+├── terraform/                     # Terraform IaC for ECS/ALB infrastructure
 ├── requirements.txt               # Python dependencies (75 packages)
 ├── testContainer.js               # Node.js integration tests for deployed container
 └── .gitignore                     # Excludes env/, __pycache__/
@@ -163,6 +165,18 @@ The container listens internally on **port 80** (required for AWS ECS). The `-p 
 
 **Required secrets**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`
 
+### terraform-validate.yml (Runs on Terraform Changes)
+
+**Trigger**: Push/PR changes touching `terraform/**`, manual workflow dispatch
+**Steps**:
+1. Checkout repository
+2. Set up Terraform
+3. Run `terraform fmt -check -recursive`
+4. Run `terraform init -backend=false`
+5. Run `terraform validate`
+
+**Purpose**: Prevent invalid infrastructure code from being merged.
+
 ## Code Architecture
 
 ### main.py Structure
@@ -246,6 +260,7 @@ Update `src/test_main.py` if you:
 - **Data files are committed**: The src/data/ directory contains 180MB+ of static JSON (version-controlled)
 - **Submodule dependency**: German-Words submodule must be initialized for production deployment
 - **Python version locked**: Dockerfile and workflow explicitly use Python 3.12
+- **Terraform source of truth**: ECS cluster/service/task definition and ALB resources are managed in `terraform/`
 
 ## Trust These Instructions
 

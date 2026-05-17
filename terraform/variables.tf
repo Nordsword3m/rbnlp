@@ -1,0 +1,57 @@
+variable "ecs_cluster_name" {
+  description = "Name for the ECS cluster"
+  type        = string
+  default     = "rbnlp-cluster"
+}
+
+variable "ecs_service_name" {
+  description = "Name for the ECS service"
+  type        = string
+  default     = "rbnlp-service"
+}
+
+variable "security_group_ids" {
+  description = "Security group IDs for the load balancer and ECS service"
+  type        = list(string)
+  default     = ["sg-010be622476101800"]
+}
+
+variable "subnet_ids" {
+  description = "Subnet IDs for the load balancer and ECS service"
+  type        = list(string)
+  default     = ["subnet-03d7da34a0cf63f1f", "subnet-0af32799fdf854ccf", "subnet-0d7eb5216b3672fbb"]
+}
+
+variable "vpc_id" {
+  description = "VPC ID where resources are deployed"
+  type        = string
+  default     = "vpc-01304652baeb25843"
+}
+
+variable "task_definition_family" {
+  description = "ECS task definition family name"
+  type        = string
+  default     = "rbnlp"
+}
+
+variable "container_image" {
+  description = "Docker image URI for the rbnlp container (e.g. <account>.dkr.ecr.eu-west-2.amazonaws.com/rbnlp:latest)"
+  type        = string
+}
+
+variable "execution_role_arn" {
+  description = "IAM role ARN that grants ECS permission to pull the image from ECR and write CloudWatch logs"
+  type        = string
+}
+
+variable "task_cpu" {
+  description = "CPU units for the Fargate task (256 = 0.25 vCPU)"
+  type        = number
+  default     = 256
+}
+
+variable "task_memory" {
+  description = "Memory (MiB) for the Fargate task"
+  type        = number
+  default     = 1024
+}
