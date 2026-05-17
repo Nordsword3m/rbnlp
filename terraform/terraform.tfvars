@@ -15,4 +15,4 @@ task_definition_family = "rbnlp"
 container_image        = "423623828513.dkr.ecr.eu-west-2.amazonaws.com/rbnlp:latest"
 execution_role_arn     = "arn:aws:iam::423623828513:role/ecsTaskExecutionRole"
 task_cpu               = 256
-task_memory            = 512
+task_memory            = 1024

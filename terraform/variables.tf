@@ -53,5 +53,5 @@ variable "task_cpu" {
 variable "task_memory" {
   description = "Memory (MiB) for the Fargate task"
   type        = number
-  default     = 512
+  default     = 1024
 }
