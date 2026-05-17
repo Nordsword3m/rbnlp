@@ -13,7 +13,7 @@ resource "aws_ecs_service" "main" {
   enable_execute_command  = false
 
   capacity_provider_strategy {
-    capacity_provider = "FARGATE"
+    capacity_provider = "FARGATE_SPOT"
     base              = 0
     weight            = 1
   }
