@@ -29,7 +29,29 @@ variable "vpc_id" {
 }
 
 variable "task_definition_family" {
-  description = "ECS task definition family name (latest active revision is used automatically)"
+  description = "ECS task definition family name"
   type        = string
   default     = "rbnlp"
+}
+
+variable "container_image" {
+  description = "Docker image URI for the rbnlp container (e.g. <account>.dkr.ecr.eu-west-2.amazonaws.com/rbnlp:latest)"
+  type        = string
+}
+
+variable "execution_role_arn" {
+  description = "IAM role ARN that grants ECS permission to pull the image from ECR and write CloudWatch logs"
+  type        = string
+}
+
+variable "task_cpu" {
+  description = "CPU units for the Fargate task (256 = 0.25 vCPU)"
+  type        = number
+  default     = 256
+}
+
+variable "task_memory" {
+  description = "Memory (MiB) for the Fargate task"
+  type        = number
+  default     = 512
 }

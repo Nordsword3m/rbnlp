@@ -1,3 +1,8 @@
+output "task_definition_arn" {
+  description = "The ARN of the managed task definition."
+  value       = aws_ecs_task_definition.main.arn
+}
+
 output "cluster_name" {
   description = "The cluster used to create the service."
   value       = var.ecs_cluster_name
