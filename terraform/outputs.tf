@@ -4,8 +4,8 @@ output "task_definition_arn" {
 }
 
 output "cluster_name" {
-  description = "The cluster used to create the service."
-  value       = var.ecs_cluster_name
+  description = "The created ECS cluster."
+  value       = aws_ecs_cluster.main.name
 }
 
 output "ecs_service" {

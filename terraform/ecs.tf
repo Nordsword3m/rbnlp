@@ -1,5 +1,19 @@
-data "aws_ecs_cluster" "main" {
-  cluster_name = var.ecs_cluster_name
+resource "aws_ecs_cluster" "main" {
+  name = var.ecs_cluster_name
+
+  setting {
+    name  = "containerInsights"
+    value = "disabled"
+  }
+
+  service_connect_defaults {
+    namespace = var.ecs_cluster_name
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "main" {
+  cluster_name       = aws_ecs_cluster.main.name
+  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
 }
 
 resource "aws_ecs_task_definition" "main" {
@@ -34,7 +48,7 @@ resource "aws_ecs_task_definition" "main" {
 
 resource "aws_ecs_service" "main" {
   name                    = var.ecs_service_name
-  cluster                 = data.aws_ecs_cluster.main.arn
+  cluster                 = aws_ecs_cluster.main.arn
   task_definition         = aws_ecs_task_definition.main.arn
   scheduling_strategy     = "REPLICA"
   desired_count           = 1
